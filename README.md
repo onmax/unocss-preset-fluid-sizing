@@ -36,40 +36,45 @@ export default defineConfig({
 })
 ```
 
+```html
+<!-- Using default theme that comes with the preset -->
+<div class="f-p-2xs f-text-xl" />
+
+<!-- Using utilities -->
+<div class="f-p f-p-min-32 f-p-max-48" />
+<div class="f-text f-p-text-8 f-p-text-12" />
+```
+
 ### Utilities
 
 This preset provides a set of utilities for all CSS properties that accept a spacing value like `padding`, `margin`, `gap`, `width` and `font-size`. You need to attach the prefix `f-` to the utility name in order to use it.
 
 > [!WARNING]
-> In order to see the effect of the utilities, you need to use the 3 utilities shown below.
-
-#### `f-${utility}-max-${maxValue}`
-
-This utilitiy is mandatory.
-
-Sets the formula to compute the value for the give utility.
-
-> If using `Attributify preset` remember to add the self referencing char(`~`) to the utility attribute like `f-pt="~ min-32 max-64"`. Same as `flex` or `grid` attributes.
+> In order to see the effect of the utilities, remember to use the 3 utilities shown below.
 
 #### `f-${utility}-min-${minValue}`
 
-This utilitiy is mandatory.
+Sets the minimum value for the utility. `f-pt-min-32` will set the `padding-top` to `32px` when the screen width is smaller than `320px`.
 
-Sets the minimum value for the utility.
+This utilitiy is mandatory. Defaults to `16`.
 
-`f-pt-min-32` will set the `padding-top` to `32px` when the screen width is smaller than `320px`.
-
-> By default, the minimum value will be set for screen with width smaller than 320px. You can change this by passing the option `minContainerWidth` to the preset.
+> By default, the minimum value will be set for screen with width smaller than `320px`. You can change this by passing the option `minContainerWidth` to the preset.
 
 #### `f-${utility}-max-${maxValue}`
 
+Sets the maximum value for the utility. `f-pt-max-48` will set the `padding-top` to `48px` when the screen width is greater than `1920px`.
+
+This utilitiy is mandatory. Defaults to `16`.
+
+> By default, the minimum value will be set for screen with width smaller than `1920px`. You can change this by passing the option `maxContainerWidth` to the preset.
+
+#### `f-${utility}`
+
+Sets the formula to compute the value for the give utility.
+
 This utilitiy is mandatory.
 
-Sets the maximum value for the utility.
-
-`f-pt-max-48` will set the `padding-top` to `48px` when the screen width is greater than `1920px`. `
-
-> By default, the minimum value will be set for screen with width smaller than 1920px. You can change this by passing the option `maxContainerWidth` to the preset.
+> If using `Attributify preset` remember to add the self referencing char(`~`) to the utility attribute like `f-pt="~ min-32 max-64"`. Same as `flex` or `grid` attributes.
 
 #### `f-base-${baseValue}`
 
@@ -94,7 +99,3 @@ Check the interface [`FluidSizingOptions`](./src/index.ts) for the full list of 
 
 - [UnoCSS Fluid Preset](https://renatomoor.github.io/unocss-preset-fluid/). Uses JS to compute the value like `f-pt-32-64` which results in a limited API.
 - [UnoCSS preset quickstart template.](https://github.com/unocss-community/unocss-preset-starter)
-
-## License
-
-[MIT](./LICENSE) License © 2023 [zyyv](https://github.com/zyyv)

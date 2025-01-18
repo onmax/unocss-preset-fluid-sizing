@@ -70,8 +70,8 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   for (const [utility, properties] of fluidSizeUtilities) {
     const rePrefix = `(?:${varPrefix}(c)?-${utility})`
-    const [minVarName, minVar] = cssVar('min')
-    const [maxVarName, maxVar] = cssVar('max')
+    const [minVarName, minVar] = cssVar('min', '16')
+    const [maxVarName, maxVar] = cssVar('max', '16')
     const [minCVarName, minCVar] = cssVar('min-container', `${minContainerWidth}`)
     const [maxCVarName, maxCVar] = cssVar('max-container', `${maxContainerWidth}`)
     const [unitVarName, unitVar] = cssVar('unit', defaultBaseUnit)
