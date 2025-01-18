@@ -1,8 +1,6 @@
 /**
  * For each pair, generate a shortcut for each utility
  */
-export const predefinedSpacingUtilities = ['p', 'pt', 'pb', 'pl', 'pr', 'm', 'mt', 'mb', 'ml', 'mr', 'gap', 'gap-x', 'gap-y', 'rounded', 'leading', 'tracking', 'bottom', 'top', 'left', 'right', 'size', 'w', 'h', 'min-size', 'max-size', 'min-w', 'min-h', 'max-w', 'max-h']
-
 export const theme = {
 
   // f-p-2xs -> f-p-min-8 f-p-max-12
