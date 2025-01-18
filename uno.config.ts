@@ -1,13 +1,9 @@
 import { defineConfig, presetUno } from 'unocss'
-import { presetStarter } from './src'
-
-// Just for Vscode Extension
+import { presetFluidSizing } from './src/'
 
 export default defineConfig({
   presets: [
     presetUno(),
-    presetStarter({
-      span: 24,
-    }),
+    presetFluidSizing(),
   ],
 })

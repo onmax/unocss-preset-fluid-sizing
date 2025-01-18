@@ -1,24 +1,24 @@
 {
-  "name": "unocss-preset-starter",
+  "name": "unocss-preset-fluid-sizing",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.7.0",
-  "description": "<description>",
-  "author": "unpreset <https://github.com/unpreset>",
+  "description": "UnoCSS preset for fluid sizing with UnoCSS philosophy in mind",
+  "author": "onmax <https://github.com/onmax>",
   "license": "MIT",
-  "homepage": "https://github.com/unpreset/unocss-preset-starter#readme",
+  "homepage": "https://github.com/onmax/unocss-preset-fluid-sizing#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/unpreset/unocss-preset-starter.git"
+    "url": "git+https://github.com/onmax/unocss-preset-fluid-sizing.git"
   },
   "bugs": {
-    "url": "https://github.com/unpreset/unocss-preset-starter/issues"
+    "url": "https://github.com/onmax/unocss-preset-fluid-sizing/issues"
   },
   "keywords": [
     "unocss",
     "unpreset",
     "unocss-preset",
-    "unocss-preset-starter"
+    "unocss-preset-fluid-sizing"
   ],
   "sideEffects": false,
   "exports": {
