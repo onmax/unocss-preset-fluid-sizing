@@ -26,15 +26,21 @@ export interface FluidSizingOptions {
 
   /**
    * Prefix for custom properties and utilities
-   * @default f
+   * @default "f-"
    */
   prefix?: string
 
   /**
-   * Include shortcuts prefix
-   * @default true
+   * Prefix for font-size utilities
+   * @default options.prefix
    */
-  includeShortcutsPrefix?: boolean
+  fontSizePrefix?: string
+
+  /**
+   * Prefix for custom utilities
+   * @default options.prefix
+   */
+  prefixUtilities?: string
 
   /**
    * Expand CSS variables
@@ -51,27 +57,28 @@ export interface FluidSizingOptions {
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
-    prefix = 'f',
+    prefix = 'f-',
     maxContainerWidth = 1920,
     minContainerWidth = 320,
     defaultBaseUnit = '1px',
-    includeShortcutsPrefix = true,
     expandCSSVariables = false,
     disableTheme = false,
   } = _options
+  const prefixFontSize = _options.fontSizePrefix ?? _options.prefix ?? prefix
+  const prefixUtilities = _options.prefixUtilities ?? _options.prefix ?? prefix
   const cssVarPrefix = `--${prefix}`
 
   const rules: Preset['rules'] = []
 
   const cssVar = (value: string, defaultValue?: string) => {
-    const varName = `${cssVarPrefix}-${value}`
+    const varName = `${cssVarPrefix}${value}`
     return [varName, `var(${varName}, ${defaultValue ?? ''})`]
   }
 
   const defaultValue = 16
 
   for (const [utility, properties] of fluidSizeUtilities) {
-    const rePrefix = `(?:${prefix}-${utility})`
+    const rePrefix = `(?:${prefix}${utility})`
     const [minVarName, minVar] = cssVar('min', `${defaultValue}`)
     const [maxVarName, maxVar] = cssVar('max', `${defaultValue}`)
     const [minCVarName, minCVar] = cssVar('min-container', `${minContainerWidth}`)
@@ -174,15 +181,12 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
   const shortcuts: Preset['shortcuts'] = []
 
   if (!disableTheme) {
-    for (const [name, [min, max]] of Object.entries(theme.fontSize)) {
-      shortcuts.push([`f-text-${name}`, `f-text-${min}/${max}`])
-    }
+    for (const [name, [min, max]] of Object.entries(theme.fontSize))
+      shortcuts.push([`${prefixFontSize}text-${name}`, `${prefix}text-${min}/${max}`])
 
-    const getShortcut = (utility: string, name: string, min: number, max: number) => ({ [`${includeShortcutsPrefix ? `${prefix}-` : ''}${utility}-${name}`]: `f-${utility}-${min}/${max}` })
     for (const [name, [min, max]] of Object.entries(theme.spacing)) {
-      for (const utility of fluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text')) {
-        shortcuts.push(getShortcut(utility, name, min, max))
-      }
+      for (const utility of fluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text'))
+        shortcuts.push([`${prefixUtilities}${utility}-${name}`, `${prefix}${utility}-${min}/${max}`])
     }
   }
 
