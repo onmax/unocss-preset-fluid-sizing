@@ -25,10 +25,10 @@ export interface FluidSizingOptions {
   defaultBaseUnit?: string
 
   /**
-   * Prefix for custom properties
+   * Prefix for custom properties and utilities
    * @default f
    */
-  varPrefix?: string
+  prefix?: string
 
   /**
    * Include shortcuts prefix
@@ -51,15 +51,15 @@ export interface FluidSizingOptions {
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
+    prefix = 'f',
     maxContainerWidth = 1920,
     minContainerWidth = 320,
     defaultBaseUnit = '1px',
-    varPrefix = 'f',
     includeShortcutsPrefix = true,
     expandCSSVariables = false,
     disableTheme = false,
   } = _options
-  const cssVarPrefix = `--${varPrefix}`
+  const cssVarPrefix = `--${prefix}`
 
   const rules: Preset['rules'] = []
 
@@ -71,7 +71,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
   const defaultValue = 16
 
   for (const [utility, properties] of fluidSizeUtilities) {
-    const rePrefix = `(?:${varPrefix}-${utility})`
+    const rePrefix = `(?:${prefix}-${utility})`
     const [minVarName, minVar] = cssVar('min', `${defaultValue}`)
     const [maxVarName, maxVar] = cssVar('max', `${defaultValue}`)
     const [minCVarName, minCVar] = cssVar('min-container', `${minContainerWidth}`)
@@ -178,7 +178,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
       shortcuts.push([`f-text-${name}`, `f-text-${min}/${max}`])
     }
 
-    const getShortcut = (utility: string, name: string, min: number, max: number) => ({ [`${includeShortcutsPrefix ? `${varPrefix}-` : ''}${utility}-${name}`]: `f-${utility}-${min}/${max}` })
+    const getShortcut = (utility: string, name: string, min: number, max: number) => ({ [`${includeShortcutsPrefix ? `${prefix}-` : ''}${utility}-${name}`]: `f-${utility}-${min}/${max}` })
     for (const [name, [min, max]] of Object.entries(theme.spacing)) {
       for (const utility of fluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text')) {
         shortcuts.push(getShortcut(utility, name, min, max))
