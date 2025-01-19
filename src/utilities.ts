@@ -37,4 +37,11 @@ export const fluidSizeUtilities: [string, string[]][] = [
   ['rounded', ['border-radius']],
   ['leading', ['line-height']],
   ['tracking', ['letter-spacing']],
+  ['shadow', ['box-shadow']],
+
+  // You need to use `transform` to apply the `translate` utility
+  ['translate', ['--un-translate-x', '--un-translate-y']],
+  ['translate-x', ['--un-translate-x']],
+  ['translate-y', ['--un-translate-y']],
+  ['translate-z', ['--un-translate-z']],
 ]

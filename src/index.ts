@@ -53,6 +53,13 @@ export interface FluidSizingOptions {
    * @default false
    */
   disableTheme?: boolean
+
+  /**
+   * User's Utilities. In case of missing utilities you can add a list of your own.
+   * But also you can open a PR to add the missing utilities ;)
+   * @default []
+   */
+  utilities?: [string, string[]][]
 }
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
@@ -63,6 +70,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     defaultBaseUnit = '1px',
     expandCSSVariables = false,
     disableTheme = false,
+    utilities: userUtilities = [],
   } = _options
   const prefixFontSize = _options.fontSizePrefix ?? _options.prefix ?? prefix
   const prefixUtilities = _options.prefixUtilities ?? _options.prefix ?? prefix
@@ -77,7 +85,15 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   const defaultValue = 16
 
+  // in case of conflict in utilities, use the user's utilities
+  const mergedFluidSizeUtilities = userUtilities
   for (const [utility, properties] of fluidSizeUtilities) {
+    if (fluidSizeUtilities.find(u => u[0] === utility))
+      continue
+    mergedFluidSizeUtilities.push([utility, properties])
+  }
+
+  for (const [utility, properties] of mergedFluidSizeUtilities) {
     const rePrefix = `(?:${prefix}${utility})`
     const [minVarName, minVar] = cssVar('min', `${defaultValue}`)
     const [maxVarName, maxVar] = cssVar('max', `${defaultValue}`)
@@ -185,7 +201,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
       shortcuts.push([`${prefixFontSize}text-${name}`, `${prefix}text-${min}/${max}`])
 
     for (const [name, [min, max]] of Object.entries(theme.spacing)) {
-      for (const utility of fluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text'))
+      for (const utility of mergedFluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text'))
         shortcuts.push([`${prefixUtilities}${utility}-${name}`, `${prefix}${utility}-${min}/${max}`])
     }
   }
