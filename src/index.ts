@@ -34,7 +34,7 @@ export interface FluidSizingOptions {
    * Prefix for font-size utilities
    * @default options.prefix
    */
-  fontSizePrefix?: string
+  prefixFontSize?: string
 
   /**
    * Prefix for custom utilities
@@ -71,9 +71,9 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     expandCSSVariables = false,
     disableTheme = false,
     utilities: userUtilities = [],
+    prefixFontSize = _options.prefix ?? prefix,
+    prefixUtilities = _options.prefix ?? prefix,
   } = _options
-  const prefixFontSize = _options.fontSizePrefix ?? _options.prefix ?? prefix
-  const prefixUtilities = _options.prefixUtilities ?? _options.prefix ?? prefix
   const cssVarPrefix = `--${prefix}`
 
   const rules: Preset['rules'] = []
@@ -87,11 +87,11 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   // in case of conflict in utilities, use the user's utilities
   const mergedFluidSizeUtilities = userUtilities
-  for (const [utility, properties] of fluidSizeUtilities) {
-    if (fluidSizeUtilities.find(u => u[0] === utility))
-      continue
+  const userUtilitiesName = userUtilities.map(u => u[0])
+  for (const [utility, properties] of fluidSizeUtilities.filter(u => !userUtilitiesName.includes(u[0]))) {
     mergedFluidSizeUtilities.push([utility, properties])
   }
+  const mergedFluidSizeUtilitiesName = mergedFluidSizeUtilities.map(u => u[0])
 
   for (const [utility, properties] of mergedFluidSizeUtilities) {
     const rePrefix = `(?:${prefix}${utility})`
@@ -194,15 +194,17 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     rules.push([new RegExp(`^${rePrefix}-container$`), () => ({ [containerVarName]: '100cqw' })])
   }
 
-  const shortcuts: Preset['shortcuts'] = []
+  const shortcuts: Preset['shortcuts'] = {}
 
   if (!disableTheme) {
-    for (const [name, [min, max]] of Object.entries(theme.fontSize))
-      shortcuts.push([`${prefixFontSize}text-${name}`, `${prefix}text-${min}/${max}`])
+    for (const [name, [min, max]] of Object.entries(theme.fontSize)) {
+      shortcuts[`${prefixFontSize}text-${name}`] = `${prefix}text-${min}/${max}`
+    }
 
     for (const [name, [min, max]] of Object.entries(theme.spacing)) {
-      for (const utility of mergedFluidSizeUtilities.map(u => u[0]).filter(u => u !== 'text'))
-        shortcuts.push([`${prefixUtilities}${utility}-${name}`, `${prefix}${utility}-${min}/${max}`])
+      for (const utility of mergedFluidSizeUtilitiesName.filter(u => u !== 'text')) {
+        shortcuts[`${prefixUtilities}${utility}-${name}`] = `${prefix}${utility}-${min}/${max}`
+      }
     }
   }
 
