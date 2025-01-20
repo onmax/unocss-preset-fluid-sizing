@@ -79,7 +79,7 @@ export interface FluidSizingOptions {
   utilities?: [string, string[]][]
 }
 
-const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: 'px', expandCSSVariables: false }
+const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: unitToNumberMap[Unit.px], expandCSSVariables: false }
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
@@ -96,7 +96,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
   globalConfig.minContainerWidth = minContainerWidth ?? globalConfig.minContainerWidth
-  globalConfig.baseUnit = defaultBaseUnit ?? globalConfig.baseUnit
+  globalConfig.baseUnit = unitToNumberMap[defaultBaseUnit as Unit] ?? globalConfig.baseUnit
   globalConfig.expandCSSVariables = expandCSSVariables ?? globalConfig.expandCSSVariables
 
   // in case of conflict in utilities, use the user's utilities
