@@ -62,28 +62,25 @@ export interface FluidSizingOptions {
   utilities?: [string, string[]][]
 }
 
+const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: '1px', expandCSSVariables: false }
+
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
     prefix = 'f-',
-    maxContainerWidth = 1920,
-    minContainerWidth = 320,
-    defaultBaseUnit = '1px',
-    expandCSSVariables = false,
+    maxContainerWidth,
+    minContainerWidth,
+    defaultBaseUnit,
+    expandCSSVariables,
     disableTheme = false,
     utilities: userUtilities = [],
     prefixFontSize = _options.prefix ?? prefix,
     prefixUtilities = _options.prefix ?? prefix,
   } = _options
-  const cssVarPrefix = `--${prefix}`
 
-  const rules: Preset['rules'] = []
-
-  const cssVar = (value: string, defaultValue?: string) => {
-    const varName = `${cssVarPrefix}${value}`
-    return [varName, `var(${varName}, ${defaultValue ?? ''})`]
-  }
-
-  const defaultValue = 16
+  globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
+  globalConfig.minContainerWidth = minContainerWidth ?? globalConfig.minContainerWidth
+  globalConfig.baseUnit = defaultBaseUnit ?? globalConfig.baseUnit
+  globalConfig.expandCSSVariables = expandCSSVariables ?? globalConfig.expandCSSVariables
 
   // in case of conflict in utilities, use the user's utilities
   const mergedFluidSizeUtilities = userUtilities
@@ -93,106 +90,8 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
   }
   const mergedFluidSizeUtilitiesName = mergedFluidSizeUtilities.map(u => u[0])
 
-  for (const [utility, properties] of mergedFluidSizeUtilities) {
-    const rePrefix = `(?:${prefix}${utility})`
-    const [minVarName, minVar] = cssVar('min', `${defaultValue}`)
-    const [maxVarName, maxVar] = cssVar('max', `${defaultValue}`)
-    const [minCVarName, minCVar] = cssVar('min-container', `${minContainerWidth}`)
-    const [maxCVarName, maxCVar] = cssVar('max-container', `${maxContainerWidth}`)
-    const [unitVarName, unitVar] = cssVar('unit', defaultBaseUnit)
-    const [rangeWidthVarName, rangeWidthVar] = cssVar(`range-width-${utility}`)
-    const [factorVarName, factorVar] = cssVar(`factor-${utility}`)
-    const [rangeSizeVarName, rangeSizeVar] = cssVar(`range-size-${utility}`)
-    const [fluidVarName, fluidVar] = cssVar(`fluid-${utility}`)
-    const [sizeVarName, sizeVar] = cssVar(`size-${utility}`)
-    const [containerVarName, containerVar] = cssVar(`container`, '100vw')
-
-    interface FluidCSS {
-      minSize?: string
-      minSizeC?: string
-      maxSize?: string
-      maxSizeC?: string
-    }
-    function getFluidCSS(options: FluidCSS = {}) {
-      const { minSize, maxSize, maxSizeC, minSizeC } = options
-      const resolvedMinSize = minSize || minVar
-      const resolvedMaxSize = maxSize || maxVar
-      const resolvedMinC = minSizeC || minCVar
-      const resolvedMaxC = maxSizeC || maxCVar
-
-      const css: Record<any, string> = {}
-      if (expandCSSVariables) {
-        css[rangeWidthVarName] = `calc(${resolvedMaxC} - ${resolvedMinC})`
-        css[factorVarName] = `calc((${containerVar} - (${unitVar} * ${resolvedMinC})) / ${rangeWidthVar})`
-        css[rangeSizeVarName] = `calc(${resolvedMaxSize} - ${resolvedMinSize})`
-        css[fluidVarName] = `calc(${unitVar} * ${resolvedMinSize} + ${rangeSizeVar} * ${factorVar})`
-        css[sizeVarName] = `clamp(calc(${unitVar} * ${resolvedMinSize}), ${fluidVar}, calc(${unitVar} * ${resolvedMaxSize}))`
-        properties.forEach(p => css[p] = `${sizeVar}`)
-      }
-      else {
-        const fluid = `calc(${unitVar} * ${resolvedMinSize} + (${resolvedMaxSize} - ${resolvedMinSize}) * (${containerVar} - (${unitVar} * ${resolvedMinC})) / (${resolvedMaxC} - ${resolvedMinC}))`
-        const minValue = `calc(${unitVar} * ${resolvedMinSize})`
-        const maxValue = `calc(${unitVar} * ${resolvedMaxSize})`
-        const value = `clamp(${minValue}, ${fluid}, ${maxValue})`
-        properties.forEach(p => css[p] = value)
-      }
-      return css
-    }
-
-    // min-<number>@<container-width>
-    rules.push([
-      new RegExp(`^${rePrefix}-min-(\\d+)(?:@(\\d+))?$`),
-      ([_, minSize, userMinContainerWidth]) => {
-        return { [minVarName]: minSize, [minCVarName]: userMinContainerWidth }
-      },
-    ] satisfies DynamicRule)
-
-    // min-container-<container-width>
-    rules.push([
-      new RegExp(`^${rePrefix}-min-container-(\\d+)$`),
-      ([_, userMinContainerWidth]) => {
-        return { [minCVarName]: userMinContainerWidth }
-      },
-    ] satisfies DynamicRule)
-
-    // max-<number>@<container-width>
-    rules.push([
-      new RegExp(`^${rePrefix}-max-(\\d+)(?:@(\\d+))?$`),
-      ([_, maxSize, userMaxContainerWidth]) => {
-        return { [maxVarName]: maxSize, [maxCVarName]: userMaxContainerWidth }
-      },
-    ] satisfies DynamicRule)
-
-    // max-container-<container-width>
-    rules.push([
-      new RegExp(`^${rePrefix}-max-container-(\\d+)$`),
-      ([_, userMaxContainerWidth]) => {
-        return { [maxCVarName]: userMaxContainerWidth }
-      },
-    ] satisfies DynamicRule)
-
-    rules.push([
-      new RegExp(`^${rePrefix}$`),
-      () => getFluidCSS(),
-    ])
-    // Support rePrefix-<number>/<number> = min-<number>/max-<number>
-    rules.push([
-      new RegExp(`^${rePrefix}-(\\d+)(?:/(\\d+))?$`),
-      ([_, minSize, maxSize]) => getFluidCSS({ minSize, maxSize }),
-    ])
-
-    // Support rePrefix-<number>@<number>/<number>@<number> = min-<number> min-container-<number> max-<number> max-container-<number>
-    rules.push([
-      new RegExp(`^${rePrefix}-(\\d+)@(\\d+)\/(\\d+)@(\\d+)$`),
-      ([_, minSize, minSizeC, maxSize, maxSizeC]) => getFluidCSS({ minSize, maxSizeC, maxSize, minSizeC }),
-    ])
-
-    // Support rePrexix-base-<number>
-    rules.push([new RegExp(`^${rePrefix}-base-(\\w+)$`), ([_, _c, newUnit]) => ({ [unitVarName]: newUnit })])
-
-    // Use cqw instead of vw
-    rules.push([new RegExp(`^${rePrefix}-container$`), () => ({ [containerVarName]: '100cqw' })])
-  }
+  const rules: Preset['rules'] = mergedFluidSizeUtilities.map(([utility, properties]) => getRules(`(${prefix}${utility})`, properties)).flat(1)
+  rules.push(...getRules(`(${prefix}\\$\\w+)`))
 
   const shortcuts: Preset['shortcuts'] = {}
 
@@ -214,3 +113,166 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     shortcuts,
   }
 })
+
+const defaultValue = 16
+
+const cssVars = {
+  max: defaultValue,
+  min: defaultValue,
+  get maxContainer() { return globalConfig.maxContainerWidth },
+  get minContainer() { return globalConfig.minContainerWidth },
+  get unit() { return globalConfig.baseUnit },
+  rangeWidth: undefined,
+  factor: undefined,
+  rangeSize: undefined,
+  fluid: undefined,
+  size: undefined,
+  container: '100cqw',
+}
+
+function toKebabCase(str: string) {
+  return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+}
+
+function getCSSVarName(variable?: keyof typeof cssVars | string, utility?: string) {
+  return `--${utility?.replace('$', '')}${variable ? `-${toKebabCase(variable)}` : ''}`
+}
+
+function getCSSVar(variable: keyof typeof cssVars, utility?: string) {
+  return `var(${getCSSVarName(variable, utility)}${cssVars[variable] ? `, ${cssVars[variable]}` : ''})`
+}
+
+function getCSSVars(variable: keyof typeof cssVars, utility?: string) {
+  return [getCSSVarName(variable, utility), getCSSVar(variable, utility)]
+}
+
+interface FluidCSS {
+  utility: string
+  properties: string[]
+  expandCSSVariables?: boolean
+  minSize?: string
+  minSizeC?: string
+  maxSize?: string
+  maxSizeC?: string
+}
+
+function getFluidCSS(options: FluidCSS) {
+  const utility = options.utility.replaceAll('$', '')
+  const {
+    properties,
+    minSize = getCSSVar('min', utility),
+    maxSize = getCSSVar('max', utility),
+    maxSizeC = getCSSVar('maxContainer', utility),
+    minSizeC = getCSSVar('minContainer', utility),
+    expandCSSVariables = globalConfig.expandCSSVariables,
+  } = options
+
+  const containerVar = getCSSVar('container', utility)
+  const unitVar = getCSSVar('unit', utility)
+
+  const css: Record<any, string> = {}
+  let value: string = ''
+
+  if (expandCSSVariables) {
+    const [rangeWidthVar, rangeWidthVarName] = getCSSVars('rangeWidth', utility)
+    const [factorVar, factorVarName] = getCSSVars('factor', utility)
+    const [rangeSizeVar, rangeSizeVarName] = getCSSVars('rangeSize', utility)
+    const [fluidVar, fluidVarName] = getCSSVars('fluid', utility)
+    const [sizeVar, sizeVarName] = getCSSVars('size', utility)
+    css[rangeWidthVarName] = `calc(${maxSizeC} - ${minSizeC})`
+    css[factorVarName] = `calc((${containerVar} - (${unitVar} * ${minSizeC})) / ${rangeWidthVar})`
+    css[rangeSizeVarName] = `calc(${maxSize} - ${minSize})`
+    css[fluidVarName] = `calc(${unitVar} * ${minSize} + ${rangeSizeVar} * ${factorVar})`
+    const clamp = `clamp(calc(${unitVar} * ${minSize}), ${fluidVar}, calc(${unitVar} * ${maxSize}))`
+    css[sizeVarName] = clamp
+    value = `${sizeVar} `
+  }
+  else {
+    const fluid = `calc(${unitVar} * ${minSize} + (${maxSize} - ${minSize}) * (${containerVar} - (${unitVar} * ${minSizeC})) / (${maxSizeC} - ${minSizeC}))`
+    const minValue = `calc(${unitVar} * ${minSize})`
+    const maxValue = `calc(${unitVar} * ${maxSize})`
+    value = `clamp(${minValue}, ${fluid}, ${maxValue})`
+  }
+
+  properties.forEach(p => css[p] = value)
+  return css
+}
+
+function getRules(_rePrefix: string, cssProperties: string[] = []) {
+  const rules: Preset['rules'] = []
+  const rePrefix = `(${_rePrefix})`
+
+  // min-<number>@<container-width>
+  rules.push([
+    new RegExp(`^${rePrefix}-min-(\\d+)(?:@(\\d+))?$`),
+    ([_, _group, utility, minSize, userMinContainerWidth]) => {
+      return { [getCSSVarName('min', utility)]: minSize, [getCSSVarName('minContainer', utility)]: userMinContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  // min-container-<container-width>
+  rules.push([
+    new RegExp(`^${rePrefix}-min-container-(\\d+)$`),
+    ([_, _group, utility, userMinContainerWidth]) => {
+      return { [getCSSVarName('minContainer', utility)]: userMinContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  // max-<number>@<container-width>
+  rules.push([
+    new RegExp(`^${rePrefix}-max-(\\d+)(?:@(\\d+))?$`),
+    ([_, _group, utility, maxSize, userMaxContainerWidth]) => {
+      return { [getCSSVarName('max', utility)]: maxSize, [getCSSVarName('maxContainer', utility)]: userMaxContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  // max-container-<container-width>
+  rules.push([
+    new RegExp(`^${rePrefix}-max-container-(\\d+)$`),
+    ([_, _group, utility, userMaxContainerWidth]) => {
+      return { [getCSSVarName('maxContainer', utility)]: userMaxContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  rules.push([
+    new RegExp(`^${rePrefix}$`),
+    (matches) => {
+      if (matches.length !== 3 || matches.includes(undefined as any))
+        return
+      const utility = matches[1]
+      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
+      return getFluidCSS({ utility, properties })
+    },
+  ])
+  // Support rePrefix-<number>/<number> = min-<number>/max-<number>
+  rules.push([
+    new RegExp(`^${rePrefix}-(\\d+)(?:/(\\d+))?$`),
+    (matches) => {
+      if (matches.length !== 5 || matches.includes(undefined as any))
+        return
+      const [_, _group, utility, minSize, maxSize] = matches
+      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
+      return getFluidCSS({ utility, minSize, maxSize, properties })
+    },
+  ])
+
+  // Support rePrefix-<number>@<number>/<number>@<number> = min-<number> min-container-<number> max-<number> max-container-<number>
+  rules.push([
+    new RegExp(`^${rePrefix}-(\\d+)@(\\d+)(?:/(\\d+)@(\\d+))?$`),
+    (matches) => {
+      if (matches.length !== 7 || matches.includes(undefined as any))
+        return
+      const [_, _group, utility, minSize, minSizeC, maxSize, maxSizeC] = matches
+      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
+      return getFluidCSS({ utility: matches.at(1)!, minSize, maxSizeC, maxSize, minSizeC, properties })
+    },
+  ])
+
+  // Support rePrexix-base-<number>
+  rules.push([new RegExp(`^${rePrefix}-base-(\\w+)$`), ([_, _group, utility, _c, newUnit]) => ({ [getCSSVarName('unit', utility)]: newUnit })])
+
+  // Use cqw instead of vw
+  rules.push([new RegExp(`^${rePrefix}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
+
+  return rules
+}
