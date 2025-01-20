@@ -3,6 +3,23 @@ import { definePreset } from '@unocss/core'
 import { theme } from './theme'
 import { fluidSizeUtilities } from './utilities'
 
+// The value of the `unit` CSS variable is a string. e.g. f-mt-rem
+enum Unit {
+  px = 'px',
+  rem = 'rem',
+  em = 'em',
+  vw = 'vw',
+  vh = 'vh',
+  vmin = 'vmin',
+  vmax = 'vmax',
+  fr = 'fr',
+  percent = '%',
+}
+
+const units = Object.values(Unit).join('|')
+const unitToNumberMap = { [Unit.px]: `1px`, [Unit.rem]: `1rem`, [Unit.em]: `1em`, [Unit.vw]: `1vw`, [Unit.vh]: `1vh`, [Unit.vmin]: `1vmin`, [Unit.vmax]: `1vmax`, [Unit.fr]: `1fr`, [Unit.percent]: `1%` }
+const unitToNumber = (unit: Unit) => unitToNumberMap[unit]
+
 export interface FluidSizingOptions {
   /**
    * Default minimum screen width
@@ -20,9 +37,9 @@ export interface FluidSizingOptions {
 
   /**
    * Default base unit
-   * @default 1px
+   * @default px
    */
-  defaultBaseUnit?: string
+  defaultBaseUnit?: Unit
 
   /**
    * Prefix for custom properties and utilities
@@ -62,7 +79,7 @@ export interface FluidSizingOptions {
   utilities?: [string, string[]][]
 }
 
-const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: '1px', expandCSSVariables: false }
+const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: 'px', expandCSSVariables: false }
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
@@ -257,7 +274,7 @@ function getRules(_rePrefix: string, cssProperties: string[] = []) {
   ])
 
   // Support rePrexix-base-<number>
-  rules.push([new RegExp(`^${rePrefix}-base-(\\w+)$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: newUnit })])
+  rules.push([new RegExp(`^${rePrefix}-base-(${units})$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as Unit) })])
 
   // Use cqw instead of vw
   rules.push([new RegExp(`^${rePrefix}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])

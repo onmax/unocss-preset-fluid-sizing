@@ -89,7 +89,7 @@ Instead of using `100vw` to compute the value, it uses `100cqw` which is the wid
 > [!WARNING]
 > This utility is experimental and may not work as expected.
 
-Sets the base unit for the utility which by default is `1px`. You can also change the default base unit by passing the option `defaultBaseUnit` to the preset.
+Sets the base unit for the utility which by default is `1px`. You can also change the default base unit by passing the option `defaultBaseUnit` to the preset. See [CSS Units](./src/index.ts) for more information.
 
 #### CSS Variables
 
