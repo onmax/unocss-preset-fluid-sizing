@@ -38,6 +38,8 @@ export const fluidSizeUtilities: [string, string[]][] = [
   ['leading', ['line-height']],
   ['tracking', ['letter-spacing']],
   ['shadow', ['box-shadow']],
+  ['ring', ['--un-ring-width']],
+  ['ring-offset', ['--un-ring-offset-width']],
 
   // You need to use `transform` to apply the `translate` utility
   ['translate', ['--un-translate-x', '--un-translate-y']],

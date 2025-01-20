@@ -127,7 +127,7 @@ const cssVars = {
   rangeSize: undefined,
   fluid: undefined,
   size: undefined,
-  container: '100cqw',
+  container: '100vw',
 }
 
 function toKebabCase(str: string) {
