@@ -16,7 +16,7 @@ enum Unit {
   percent = '%',
 }
 
-const units = Object.values(Unit).join('|')
+const units = Object.keys(Unit).join('|')
 const unitToNumberMap = { [Unit.px]: `1px`, [Unit.rem]: `1rem`, [Unit.em]: `1em`, [Unit.vw]: `1vw`, [Unit.vh]: `1vh`, [Unit.vmin]: `1vmin`, [Unit.vmax]: `1vmax`, [Unit.fr]: `1fr`, [Unit.percent]: `1%` }
 const unitToNumber = (unit: Unit) => unitToNumberMap[unit]
 
