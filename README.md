@@ -53,37 +53,32 @@ You can play with the preset in the [Playground](https://unocss.dev/play/#html=D
 
 This preset provides a set of utilities for all CSS properties that accept a spacing value like `padding`, `margin`, `gap`, `width` and `font-size`. You need to attach the prefix `f-` to the utility name in order to use it.
 
-#### `f-${utility}`
-
-Sets the formula to compute the value for the give utility.
-
-This utilitiy is mandatory.
-
-#### One utility: `f-${utility}-${minValue@minScreenWidth}/${maxValue@maxScreenWidth}`
+#### `f-${utility}-${minValue}/${maxValue}`
 
 Sets the minimum and maximum value for the utility:
 
 - `f-pt-32/64` will set the `padding-top` to `32px` when the screen width is smaller than `64px`.
-- `f-pt-32@640/64@1440` will set the `padding-top` to `32px` when the screen width is smaller than `640px` and `64px` when the screen width is greater than `1440px`.
 
-> Using `@screenWidth` is optional. You can also modify the `minContainerWidth`/`maxContainerWidth` options in the preset.
+##### `f-${utility}`, `f-${utility}-min-${minValue}` and `f-${utility}-max-${maxValue}`
 
-##### Multiple utilities: `f-${utility}-min-${minValue}` and `f-${utility}-max-${maxValue}`
+Same as above but more explicit.
 
-Sets the minimum and maximum value for the utility:
+```html
+<div class="f-pt f-pt-min-32 f-pt-max-64"></div>
+```
 
-- `f-pt-min-32` will set the `padding-top` to `32px` when the screen width is smaller than `320px`.
-- `f-pt-max-64` will set the `padding-top` to `64px` when the screen width is greater than `1920px`.
+- `f-pt-min-32` will set the `padding-top` to `32px`.
+- `f-pt-max-64` will set the `padding-top` to `64px`.
 
 > If using `Attributify preset` remember to add the self referencing char(`~`) to the utility attribute like `f-pt="~ min-32 max-64"`. Same as `flex` or `grid` attributes.
 
-If you need to modify the sceen width you can use it with `@`, use `min-container-<container-width>`/`max-container-<container-width>` or change the global config:
+#### `f-${utility}-min-container`
 
-- `f-pt-min-32@640` will set the `padding-top` to `32px` when the screen width is smaller than `640px`.
-- `f-pt-max-48@1440` will set the `padding-top` to `48px` when the screen width is smaller than `1440px`.
-- `f-pt-min-screen-640` will set the min container  width to `640px`.
-- `f-pt-max-screen-1440` will set the max container width to `1440px`.
-- Globallyby passing the option `minContainerWidth`/`maxContainerWidth` to the preset.
+Sets the minimum screen width for the utility. By default it is `320px`. You can change it with the option `minContainerWidth` in the preset.
+
+#### `f-${utility}-max-container`
+
+Sets the maximum screen width for the utility. By default it is `1920px`. You can change it with the option `maxContainerWidth` in the preset.
 
 #### `f-${utility}-container`
 

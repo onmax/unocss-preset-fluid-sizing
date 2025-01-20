@@ -202,11 +202,11 @@ function getRules(_rePrefix: string, cssProperties: string[] = []) {
   const rules: Preset['rules'] = []
   const rePrefix = `(${_rePrefix})`
 
-  // min-<number>@<container-width>
+  // min-<number>
   rules.push([
-    new RegExp(`^${rePrefix}-min-(\\d+)(?:@(\\d+))?$`),
-    ([_, _group, utility, minSize, userMinContainerWidth]) => {
-      return { [getCSSVarName('min', utility)]: minSize, [getCSSVarName('minContainer', utility)]: userMinContainerWidth }
+    new RegExp(`^${rePrefix}-min-(\\d+)$`),
+    ([_, _group, utility, minSize]) => {
+      return { [getCSSVarName('min', utility)]: minSize }
     },
   ] satisfies DynamicRule)
 
@@ -218,11 +218,11 @@ function getRules(_rePrefix: string, cssProperties: string[] = []) {
     },
   ] satisfies DynamicRule)
 
-  // max-<number>@<container-width>
+  // max-<number>
   rules.push([
-    new RegExp(`^${rePrefix}-max-(\\d+)(?:@(\\d+))?$`),
-    ([_, _group, utility, maxSize, userMaxContainerWidth]) => {
-      return { [getCSSVarName('max', utility)]: maxSize, [getCSSVarName('maxContainer', utility)]: userMaxContainerWidth }
+    new RegExp(`^${rePrefix}-max-(\\d+)$`),
+    ([_, _group, utility, maxSize]) => {
+      return { [getCSSVarName('max', utility)]: maxSize }
     },
   ] satisfies DynamicRule)
 
@@ -256,20 +256,8 @@ function getRules(_rePrefix: string, cssProperties: string[] = []) {
     },
   ])
 
-  // Support rePrefix-<number>@<number>/<number>@<number> = min-<number> min-container-<number> max-<number> max-container-<number>
-  rules.push([
-    new RegExp(`^${rePrefix}-(\\d+)@(\\d+)(?:/(\\d+)@(\\d+))?$`),
-    (matches) => {
-      if (matches.length !== 7 || matches.includes(undefined as any))
-        return
-      const [_, _group, utility, minSize, minSizeC, maxSize, maxSizeC] = matches
-      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
-      return getFluidCSS({ utility: matches.at(1)!, minSize, maxSizeC, maxSize, minSizeC, properties })
-    },
-  ])
-
   // Support rePrexix-base-<number>
-  rules.push([new RegExp(`^${rePrefix}-base-(\\w+)$`), ([_, _group, utility, _c, newUnit]) => ({ [getCSSVarName('unit', utility)]: newUnit })])
+  rules.push([new RegExp(`^${rePrefix}-base-(\\w+)$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: newUnit })])
 
   // Use cqw instead of vw
   rules.push([new RegExp(`^${rePrefix}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
