@@ -1,7 +1,7 @@
 {
   "name": "unocss-preset-fluid-sizing",
   "type": "module",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "packageManager": "pnpm@9.15.4",
   "description": "UnoCSS preset for fluid sizing with UnoCSS philosophy in mind",
   "author": "onmax <https://github.com/onmax>",
