@@ -16,9 +16,9 @@ enum Unit {
   percent = '%',
 }
 
-const units = Object.keys(Unit).join('|')
-const unitToNumberMap = { [Unit.px]: `1px`, [Unit.rem]: `1rem`, [Unit.em]: `1em`, [Unit.vw]: `1vw`, [Unit.vh]: `1vh`, [Unit.vmin]: `1vmin`, [Unit.vmax]: `1vmax`, [Unit.fr]: `1fr`, [Unit.percent]: `1%` }
-const unitToNumber = (unit: Unit) => unitToNumberMap[unit]
+const units = Object.entries(Unit).map(([key]) => key).join('|')
+const unitToNumberMap = { [Unit.px]: `1px`, [Unit.rem]: `1rem`, [Unit.em]: `1em`, [Unit.vw]: `1vw`, [Unit.vh]: `1vh`, [Unit.vmin]: `1vmin`, [Unit.vmax]: `1vmax`, [Unit.fr]: `1fr`, percent: `1%` }
+const unitToNumber = (unit: keyof typeof unitToNumberMap) => unitToNumberMap[unit]
 
 export interface FluidSizingOptions {
   /**
@@ -96,7 +96,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
   globalConfig.minContainerWidth = minContainerWidth ?? globalConfig.minContainerWidth
-  globalConfig.baseUnit = unitToNumberMap[defaultBaseUnit as Unit] ?? globalConfig.baseUnit
+  globalConfig.baseUnit = unitToNumberMap[defaultBaseUnit as keyof typeof unitToNumberMap] ?? globalConfig.baseUnit
   globalConfig.expandCSSVariables = expandCSSVariables ?? globalConfig.expandCSSVariables
 
   // in case of conflict in utilities, use the user's utilities
@@ -274,7 +274,7 @@ function getRules(_rePrefix: string, cssProperties: string[] = []) {
   ])
 
   // Support rePrexix-base-<number>
-  rules.push([new RegExp(`^${rePrefix}-base-(${units})$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as Unit) })])
+  rules.push([new RegExp(`^${rePrefix}-base-(${units})$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as keyof typeof unitToNumberMap) })])
 
   // Use cqw instead of vw
   rules.push([new RegExp(`^${rePrefix}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
