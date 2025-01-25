@@ -19,6 +19,15 @@ export const theme = {
     '5xl': [144, 200],
   },
 
+  borderRadius: {
+    'xs': [2, 4],
+    'sm': [4, 6],
+    'md': [6, 8],
+    'lg': [8, 12],
+    'xl': [12, 16],
+    '2xl': [16, 24],
+  },
+
   // f-text-2xs -> f-text-min-9 f-text-max-11
   // f-text-lg  -> f-text-min-16 f-text-max-18
   fontSize: {

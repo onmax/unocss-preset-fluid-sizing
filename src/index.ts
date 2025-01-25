@@ -48,18 +48,6 @@ export interface FluidSizingOptions {
   prefix?: string
 
   /**
-   * Prefix for font-size utilities
-   * @default options.prefix
-   */
-  prefixFontSize?: string
-
-  /**
-   * Prefix for custom utilities
-   * @default options.prefix
-   */
-  prefixUtilities?: string
-
-  /**
    * Expand CSS variables
    * @default false
    */
@@ -90,8 +78,6 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     expandCSSVariables,
     disableTheme = false,
     utilities: userUtilities = [],
-    prefixFontSize = _options.prefix ?? prefix,
-    prefixUtilities = _options.prefix ?? prefix,
   } = _options
 
   globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
@@ -114,12 +100,17 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
 
   if (!disableTheme) {
     for (const [name, [min, max]] of Object.entries(theme.fontSize)) {
-      shortcuts[`${prefixFontSize}text-${name}`] = `${prefix}text-${min}/${max}`
+      shortcuts[`${prefix}text-${name}`] = `${prefix}text-${min}/${max}`
     }
 
+    for (const [name, [min, max]] of Object.entries(theme.borderRadius)) {
+      shortcuts[`${prefix}rounded-${name}`] = `${prefix}rounded-${min}/${max}`
+    }
+
+    const ignoredProperties = ['text', 'rounded']
     for (const [name, [min, max]] of Object.entries(theme.spacing)) {
-      for (const utility of mergedFluidSizeUtilitiesName.filter(u => u !== 'text')) {
-        shortcuts[`${prefixUtilities}${utility}-${name}`] = `${prefix}${utility}-${min}/${max}`
+      for (const utility of mergedFluidSizeUtilitiesName.filter(u => !ignoredProperties.includes(u))) {
+        shortcuts[`${prefix}${utility}-${name}`] = `${prefix}${utility}-${min}/${max}`
       }
     }
   }
