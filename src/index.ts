@@ -65,6 +65,12 @@ export interface FluidSizingOptions {
    * @default []
    */
   utilities?: [string, string[]][]
+
+  /**
+   * Enable attributify mode
+   * @default false
+   */
+  attributify?: boolean
 }
 
 const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: unitToNumberMap[Unit.px], expandCSSVariables: false }
@@ -78,6 +84,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     expandCSSVariables,
     disableTheme = false,
     utilities: userUtilities = [],
+    attributify = false,
   } = _options
 
   globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
@@ -93,27 +100,10 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
   }
   const mergedFluidSizeUtilitiesName = mergedFluidSizeUtilities.map(u => u[0])
 
-  const rules: Preset['rules'] = mergedFluidSizeUtilities.map(([utility, properties]) => getRules(`(${prefix}${utility})`, properties)).flat(1)
+  const rules: Preset['rules'] = mergedFluidSizeUtilities.map(([utility, properties]) => getRules(`${prefix}(${utility})`, properties)).flat(1)
   rules.push(...getRules(`(${prefix}\\$\\w+)`))
 
-  const shortcuts: Preset['shortcuts'] = {}
-
-  if (!disableTheme) {
-    for (const [name, [min, max]] of Object.entries(theme.fontSize)) {
-      shortcuts[`${prefix}text-${name}`] = `${prefix}text-${min}/${max}`
-    }
-
-    for (const [name, [min, max]] of Object.entries(theme.borderRadius)) {
-      shortcuts[`${prefix}rounded-${name}`] = `${prefix}rounded-${min}/${max}`
-    }
-
-    const ignoredProperties = ['text', 'rounded']
-    for (const [name, [min, max]] of Object.entries(theme.spacing)) {
-      for (const utility of mergedFluidSizeUtilitiesName.filter(u => !ignoredProperties.includes(u))) {
-        shortcuts[`${prefix}${utility}-${name}`] = `${prefix}${utility}-${min}/${max}`
-      }
-    }
-  }
+  const shortcuts: Preset['shortcuts'] = getShortcuts(prefix, mergedFluidSizeUtilitiesName, { attributify, disableTheme })
 
   return {
     name: 'unocss-preset-fluid-sizing',
@@ -206,69 +196,108 @@ function getFluidCSS(options: FluidCSS) {
   return css
 }
 
-function getRules(_rePrefix: string, cssProperties: string[] = []) {
+function getRules(reUtility: string, cssProperties: string[] = []) {
   const rules: Preset['rules'] = []
-  const rePrefix = `(${_rePrefix})`
 
   // min-<number>
   rules.push([
-    new RegExp(`^${rePrefix}-min-(\\d+)$`),
-    ([_, _group, utility, minSize]) => {
+    new RegExp(`^${reUtility}-min-(\\d+)$`),
+    ([_, utility, minSize]) => {
       return { [getCSSVarName('min', utility)]: minSize }
     },
   ] satisfies DynamicRule)
 
   // min-container-<container-width>
   rules.push([
-    new RegExp(`^${rePrefix}-min-container-(\\d+)$`),
-    ([_, _group, utility, userMinContainerWidth]) => {
+    new RegExp(`^${reUtility}-min-container-(\\d+)$`),
+    ([_, utility, userMinContainerWidth]) => {
       return { [getCSSVarName('minContainer', utility)]: userMinContainerWidth }
     },
   ] satisfies DynamicRule)
 
   // max-<number>
   rules.push([
-    new RegExp(`^${rePrefix}-max-(\\d+)$`),
-    ([_, _group, utility, maxSize]) => {
+    new RegExp(`^${reUtility}-max-(\\d+)$`),
+    ([_, utility, maxSize]) => {
       return { [getCSSVarName('max', utility)]: maxSize }
     },
   ] satisfies DynamicRule)
 
   // max-container-<container-width>
   rules.push([
-    new RegExp(`^${rePrefix}-max-container-(\\d+)$`),
-    ([_, _group, utility, userMaxContainerWidth]) => {
+    new RegExp(`^${reUtility}-max-container-(\\d+)$`),
+    ([_, utility, userMaxContainerWidth]) => {
       return { [getCSSVarName('maxContainer', utility)]: userMaxContainerWidth }
     },
   ] satisfies DynamicRule)
 
   rules.push([
-    new RegExp(`^${rePrefix}$`),
+    new RegExp(`^${reUtility}$`),
     (matches) => {
-      if (matches.length !== 3 || matches.includes(undefined as any))
+      if (matches.length !== 2 || matches.includes(undefined as any))
         return
-      const utility = matches[1]
+      const utility = matches[0]
       const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
       return getFluidCSS({ utility, properties })
     },
   ])
   // Support rePrefix-<number>/<number> = min-<number>/max-<number>
-  rules.push([
-    new RegExp(`^${rePrefix}-(\\d+)(?:/(\\d+))?$`),
-    (matches) => {
-      if (matches.length !== 5 || matches.includes(undefined as any))
-        return
-      const [_, _group, utility, minSize, maxSize] = matches
-      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
-      return getFluidCSS({ utility, minSize, maxSize, properties })
-    },
-  ])
+  // rules.push([
+  //   new RegExp(`^${rePrefix}-(\\d+)(?:/(\\d+))?$`),
+  //   (matches) => {
+  //     if (matches.length !== 4 || matches.includes(undefined as any))
+  //       return
+  //     const [_, utility, minSize, maxSize] = matches
+  //     const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
+  //     return getFluidCSS({ utility, minSize, maxSize, properties })
+  //   },
+  // ])
 
-  // Support rePrexix-base-<number>
-  rules.push([new RegExp(`^${rePrefix}-base-(${units})$`), ([_, _group, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as keyof typeof unitToNumberMap) })])
+  // Support rePrefix-base-<number>
+  rules.push([new RegExp(`^${reUtility}-base-(${units})$`), ([_, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as keyof typeof unitToNumberMap) })])
 
   // Use cqw instead of vw
-  rules.push([new RegExp(`^${rePrefix}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
+  rules.push([new RegExp(`^${reUtility}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
 
   return rules
+}
+
+/**
+ * Get shortcuts for the user's utilities
+ * 1. Shortcut for `utility-min/max` becomes: `utility utility-min-X utility-max-X`
+ * 2. Shortcut for `text-2xs` becomes: `text-min/max`. The values are taken from the theme.
+ * 3. Shortcut for `rounded-2xs` becomes: `rounded-min/max`. The values are taken from the theme.
+ * 4. Shortcut for the rest of utilities becomes: `utility-min/max`. The values are taken from the theme.
+ */
+function getShortcuts(prefix: string, utilities: string[], { attributify, disableTheme }: Pick<FluidSizingOptions, 'attributify' | 'disableTheme'>): Preset['shortcuts'] {
+  const shortcuts: Preset['shortcuts'] = utilities.map(utility => [
+    new RegExp(`^${prefix}${utility}-(\\d+)/(\\d+)$`),
+    ([, min, max]) => `${prefix}${utility} ${prefix}${utility}-min-${min} ${prefix}${utility}-max-${max}`,
+  ] as const)
+
+  if (!disableTheme) {
+    const getPrefixAttribute = (utility: string) => `${utility}-${prefix.endsWith('-') ? prefix.slice(0, -1) : prefix}`
+    for (const [name, [min, max]] of Object.entries(theme.fontSize)) {
+      shortcuts.push([`${prefix}text-${name}`, `${prefix}text-${min}/${max}`])
+      if (attributify)
+        shortcuts.push([`${getPrefixAttribute('text')}-${name}`, `${prefix}text-${min}/${max}`])
+    }
+
+    for (const [name, [min, max]] of Object.entries(theme.borderRadius)) {
+      shortcuts.push([`${prefix}rounded-${name}`, `${prefix}rounded-${min}/${max}`])
+      if (attributify)
+        shortcuts.push([`${getPrefixAttribute('rounded')}-${name}`, `${prefix}rounded-${min}/${max}`])
+    }
+
+    const ignoredProperties = ['text', 'rounded']
+    for (const [name, [min, max]] of Object.entries(theme.spacing)) {
+      for (const utility of utilities.filter(u => !ignoredProperties.includes(u))) {
+        shortcuts.push([`${prefix}${utility}-${name}`, `${prefix}${utility}-${min}/${max}`])
+        if (attributify)
+          shortcuts.push([`${getPrefixAttribute(utility)}-${name}`, `${prefix}${utility}-${min}/${max}`])
+      }
+    }
+  }
+
+  return shortcuts
 }

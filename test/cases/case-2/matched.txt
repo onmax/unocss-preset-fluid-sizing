@@ -1,0 +1,3 @@
+[text~="blue"]
+[text~="xl"]
+[text~="f-lg"]

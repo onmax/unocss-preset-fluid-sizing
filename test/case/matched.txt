@@ -1,0 +1,2 @@
+[text~="blue"]
+[text~="xl"]

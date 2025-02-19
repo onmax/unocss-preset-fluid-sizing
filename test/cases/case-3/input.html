@@ -1,0 +1,326 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Fluid Sizing Test</title>
+  </head>
+  <body>
+    <!-- Basic utilities: test both class and attribute -->
+    <section id="basic-utilities">
+      <div class="f-text f-text-min-12 f-text-max-24 f-text-min-container-320 f-text-max-container-1920" 
+           f-text=""
+           f-text-min-12=""
+           f-text-max-24=""
+           f-text-min-container-320=""
+           f-text-max-container-1920="">
+      </div>
+    </section>
+
+    <!-- Font size theme shortcuts -->
+    <section id="font-size-shortcuts">
+      <div class="f-text-2xs" text-f-2xs=""></div>
+      <div class="f-text-xs" text-f-xs=""></div>
+      <div class="f-text-sm" text-f-sm=""></div>
+      <div class="f-text-base" text-f-base=""></div>
+      <div class="f-text-lg" text-f-lg=""></div>
+      <div class="f-text-xl" text-f-xl=""></div>
+      <div class="f-text-2xl" text-f-2xl=""></div>
+      <div class="f-text-3xl" text-f-3xl=""></div>
+      <div class="f-text-4xl" text-f-4xl=""></div>
+      <div class="f-text-5xl" text-f-5xl=""></div>
+    </section>
+
+    <!-- Direct min/max combinations -->
+    <section id="direct-combinations">
+      <div class="f-text-12/16"></div>
+      <div class="f-text-14/18"></div>
+      <div class="f-text-16/20"></div>
+    </section>
+
+    <!-- CSS variable usage -->
+    <section id="css-variable-usage">
+      <div class="f-text" f-text=""
+           style="--f-text-min:14; --f-text-max:28; --f-text-min-container:300; --f-text-max-container:1600;">
+      </div>
+    </section>
+
+    <!-- Container and unit variations -->
+    <section id="container-unit-variations">
+      <div class="f-text f-text-base-rem" text-base-rem=""></div>
+      <div class="f-text f-text-base-em" text-base-em=""></div>
+      <div class="f-text f-text-container" text-container=""></div>
+    </section>
+
+    <!-- Custom variable test -->
+    <section id="custom-variable-test">
+      <div class="f-$myvar f-$myvar-min-10 f-$myvar-max-50" 
+           $myvar=""
+           $myvar-min-10=""
+           $myvar-max-50="">
+      </div>
+    </section>
+
+    <!-- Basic fluid text (full config) -->
+    <section id="basic-fluid-text">
+      <div class="f-text f-text-min-12 f-text-max-24 f-text-min-container-320 f-text-max-container-1920" 
+           f-text="min-12 max-24">
+      </div>
+    </section>
+
+    <!-- All font size theme shortcuts in one -->
+    <section id="all-font-size-shortcuts">
+      <div class="f-text-2xs f-text-xs f-text-sm f-text-base f-text-lg f-text-xl f-text-2xl f-text-3xl f-text-4xl f-text-5xl" 
+           text="f-2xs f-xs f-sm f-base f-lg f-xl f-2xl f-3xl f-4xl f-5xl">
+      </div>
+    </section>
+
+    <!-- Sizing utilities -->
+    <section id="sizing-utilities">
+      <div class="f-w-min-100 f-w-max-300 f-h-min-50 f-h-max-150" 
+           w-min-100=""
+           w-max-300=""
+           h-min-50=""
+           h-max-150="">
+      </div>
+      <div class="f-size-min-100 f-size-max-200" 
+           size-min-100=""
+           size-max-200="">
+      </div>
+      <div class="f-min-size-50 f-max-size-150" 
+           min-size-50=""
+           max-size-150="">
+      </div>
+      <div class="f-min-w-100 f-max-w-300 f-min-h-50 f-max-h-150" 
+           min-w-100=""
+           max-w-300=""
+           min-h-50=""
+           max-h-150="">
+      </div>
+    </section>
+
+    <!-- Margin utilities -->
+    <section id="margin-utilities">
+      <div class="f-m-min-10 f-m-max-20" 
+           m-min-10=""
+           m-max-20="">
+      </div>
+      <div class="f-mx-min-10 f-mx-max-20" 
+           mx-min-10=""
+           mx-max-20="">
+      </div>
+      <div class="f-my-min-10 f-my-max-20" 
+           my-min-10=""
+           my-max-20="">
+      </div>
+      <div class="f-mt-min-10 f-mt-max-20 f-mb-min-10 f-mb-max-20 f-ml-min-10 f-ml-max-20 f-mr-min-10 f-mr-max-20" 
+           mt-min-10=""
+           mt-max-20=""
+           mb-min-10=""
+           mb-max-20=""
+           ml-min-10=""
+           ml-max-20=""
+           mr-min-10=""
+           mr-max-20="">
+      </div>
+    </section>
+
+    <!-- Padding utilities -->
+    <section id="padding-utilities">
+      <div class="f-p-min-10 f-p-max-20" 
+           p-min-10=""
+           p-max-20="">
+      </div>
+      <div class="f-px-min-10 f-px-max-20" 
+           px-min-10=""
+           px-max-20="">
+      </div>
+      <div class="f-py-min-10 f-py-max-20" 
+           py-min-10=""
+           py-max-20="">
+      </div>
+      <div class="f-pt-min-10 f-pt-max-20 f-pb-min-10 f-pb-max-20 f-pl-min-10 f-pl-max-20 f-pr-min-10 f-pr-max-20" 
+           pt-min-10=""
+           pt-max-20=""
+           pb-min-10=""
+           pb-max-20=""
+           pl-min-10=""
+           pl-max-20=""
+           pr-min-10=""
+           pr-max-20="">
+      </div>
+    </section>
+
+    <!-- Position utilities -->
+    <section id="position-utilities">
+      <div class="f-top-min-0 f-top-max-100 f-bottom-min-0 f-bottom-max-100 f-left-min-0 f-left-max-100 f-right-min-0 f-right-max-100" 
+           top-min-0=""
+           top-max-100=""
+           bottom-min-0=""
+           bottom-max-100=""
+           left-min-0=""
+           left-max-100=""
+           right-min-0=""
+           right-max-100="">
+      </div>
+      <div class="f-t-min-0 f-t-max-100 f-b-min-0 f-b-max-100 f-l-min-0 f-l-max-100 f-r-min-0 f-r-max-100" 
+           t-min-0=""
+           t-max-100=""
+           b-min-0=""
+           b-max-100=""
+           l-min-0=""
+           l-max-100=""
+           r-min-0=""
+           r-max-100="">
+      </div>
+    </section>
+
+    <!-- Gap utilities -->
+    <section id="gap-utilities">
+      <div class="f-gap-min-10 f-gap-max-20" 
+           gap-min-10=""
+           gap-max-20="">
+      </div>
+      <div class="f-gap-x-min-10 f-gap-x-max-20 f-gap-y-min-10 f-gap-y-max-20" 
+           gap-x-min-10=""
+           gap-x-max-20=""
+           gap-y-min-10=""
+           gap-y-max-20="">
+      </div>
+    </section>
+
+    <!-- Border radius -->
+    <section id="border-radius">
+      <div class="f-rounded-min-4 f-rounded-max-8" 
+           rounded-min-4=""
+           rounded-max-8="">
+      </div>
+      <div class="f-rounded-2xs f-rounded-xs f-rounded-sm f-rounded-md f-rounded-lg f-rounded-xl f-rounded-2xl" 
+           rounded-2xs=""
+           rounded-xs=""
+           rounded-sm=""
+           rounded-md=""
+           rounded-lg=""
+           rounded-xl=""
+           rounded-2xl="">
+      </div>
+    </section>
+
+    <!-- Line height and letter spacing -->
+    <section id="line-height-letter-spacing">
+      <div class="f-leading-min-4 f-leading-max-8" 
+           leading-min-4=""
+           leading-max-8="">
+      </div>
+      <div class="f-tracking-min-1 f-tracking-max-4" 
+           tracking-min-1=""
+           tracking-max-4="">
+      </div>
+    </section>
+
+    <!-- Shadow and ring -->
+    <section id="shadow-ring">
+      <div class="f-shadow-min-2 f-shadow-max-8" 
+           shadow-min-2=""
+           shadow-max-8="">
+      </div>
+      <div class="f-ring-min-1 f-ring-max-4 f-ring-offset-min-2 f-ring-offset-max-8" 
+           ring-min-1=""
+           ring-max-4=""
+           ring-offset-min-2=""
+           ring-offset-max-8="">
+      </div>
+    </section>
+
+    <!-- Transform utilities -->
+    <section id="transform">
+      <div class="f-translate-min-10 f-translate-max-50" 
+           translate-min-10=""
+           translate-max-50="">
+      </div>
+      <div class="f-translate-x-min-10 f-translate-x-max-50 f-translate-y-min-10 f-translate-y-max-50 f-translate-z-min-10 f-translate-z-max-50" 
+           translate-x-min-10=""
+           translate-x-max-50=""
+           translate-y-min-10=""
+           translate-y-max-50=""
+           translate-z-min-10=""
+           translate-z-max-50="">
+      </div>
+    </section>
+
+    <!-- Unit variations -->
+    <section id="unit-variations">
+      <div class="f-text f-text-base-rem" text-base-rem=""></div>
+      <div class="f-text f-text-base-em" text-base-em=""></div>
+      <div class="f-text f-text-base-vw" text-base-vw=""></div>
+      <div class="f-text f-text-base-vh" text-base-vh=""></div>
+      <div class="f-text f-text-base-vmin" text-base-vmin=""></div>
+      <div class="f-text f-text-base-vmax" text-base-vmax=""></div>
+    </section>
+
+    <!-- Container query width -->
+    <section id="container-query-width">
+      <div class="f-text f-text-container" text-container=""></div>
+    </section>
+
+    <!-- Theme spacing -->
+    <section id="theme-spacing">
+      <div class="f-m-xs f-m-sm f-m-md f-m-lg f-m-xl" 
+           m-xs=""
+           m-sm=""
+           m-md=""
+           m-lg=""
+           m-xl="">
+      </div>
+      <div class="f-p-xs f-p-sm f-p-md f-p-lg f-p-xl" 
+           p-xs=""
+           p-sm=""
+           p-md=""
+           p-lg=""
+           p-xl="">
+      </div>
+      <div class="f-gap-xs f-gap-sm f-gap-md f-gap-lg f-gap-xl" 
+           gap-xs=""
+           gap-sm=""
+           gap-md=""
+           gap-lg=""
+           gap-xl="">
+      </div>
+    </section>
+
+    <!-- Custom variables -->
+    <section id="custom-variables">
+      <div class="f-$custom f-$custom-min-10 f-$custom-max-50" 
+           $custom=""
+           $custom-min-10=""
+           $custom-max-50="">
+      </div>
+      <div class="f-$custom-x f-$custom-x-min-0 f-$custom-x-max-100 f-$custom-y f-$custom-y-min-0 f-$custom-y-max-100" 
+           $custom-x=""
+           $custom-x-min-0=""
+           $custom-x-max-100=""
+           $custom-y=""
+           $custom-y-min-0=""
+           $custom-y-max-100="">
+      </div>
+    </section>
+
+    <!-- Min/Max container overrides -->
+    <section id="container-overrides">
+      <div class="f-text f-text-min-container-0 f-text-max-container-2000" 
+           text-min-container-0=""
+           text-max-container-2000="">
+      </div>
+    </section>
+
+    <!-- Complex combinations -->
+    <section id="complex-combinations">
+      <div class="f-text-xl f-mt-lg f-p-md f-rounded-sm f-shadow-lg" 
+           text-xl=""
+           mt-lg=""
+           p-md=""
+           rounded-sm=""
+           shadow-lg="">
+      </div>
+      <div class="f-text-18/24 f-mt-10/20 f-p-8/16 f-rounded-4/8"></div>
+    </section>
+  </body>
+</html>

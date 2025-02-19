@@ -1,0 +1,5 @@
+/* layer: shortcuts */
+[text~="f-lg"]{--text-min:16;--text-max:18;font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}
+/* layer: default */
+[text~="xl"]{font-size:1.25rem;line-height:1.75rem;}
+[text~="blue"]{--un-text-opacity:1;color:rgb(96 165 250 / var(--un-text-opacity));}

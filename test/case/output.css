@@ -1,0 +1,3 @@
+/* layer: default */
+[text~="xl"]{font-size:1.25rem;line-height:1.75rem;}
+[text~="blue"]{--un-text-opacity:1;color:rgb(96 165 250 / var(--un-text-opacity));}
