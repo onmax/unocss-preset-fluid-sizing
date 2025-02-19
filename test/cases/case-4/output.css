@@ -1,0 +1,5 @@
+/* layer: default */
+[mt~="\$f-myvar"]{margin-top:var(--f-myvar);}
+[f~="\$myvar-min-0"]{--f-myvar-min:0;}
+[f~="\$myvar-max-100"]{--f-myvar-max:100;}
+[f~="\$myvar"]{--f-myvar:clamp(calc(var(--f-myvar-unit, 1px) * var(--f-myvar-min, 16)), calc(var(--f-myvar-unit, 1px) * var(--f-myvar-min, 16) + (var(--f-myvar-max, 16) - var(--f-myvar-min, 16)) * (var(--f-myvar-container, 100vw) - (var(--f-myvar-unit, 1px) * var(--f-myvar-min-container, 320))) / (var(--f-myvar-max-container, 1920) - var(--f-myvar-min-container, 320))), calc(var(--f-myvar-unit, 1px) * var(--f-myvar-max, 16)));}

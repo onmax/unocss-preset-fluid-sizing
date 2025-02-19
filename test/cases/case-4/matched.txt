@@ -1,0 +1,4 @@
+[f~="$myvar"]
+[f~="$myvar-min-0"]
+[f~="$myvar-max-100"]
+[mt~="$f-myvar"]

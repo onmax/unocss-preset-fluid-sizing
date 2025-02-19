@@ -1,11 +1,11 @@
 /* layer: shortcuts */
 .f-text-18\/22,
 .f-text-xl,
-[f-text-xl=""]{--text-min:18;--text-max:22;font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}
-[f-text-4xl=""]{--text-min:32;--text-max:44;font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}
+[f-text-xl=""]{--f-text-min:18;--f-text-max:22;font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}
+[f-text-4xl=""]{--f-text-min:32;--f-text-max:44;font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}
 .f-mt-xl,
-[f-mt-xl=""]{--mt-min:48;--mt-max:72;margin-top:clamp(calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16)), calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16) + (var(--f-mt-max, 16) - var(--f-mt-min, 16)) * (var(--f-mt-container, 100vw) - (var(--f-mt-unit, 1px) * var(--f-mt-min-container, 320))) / (var(--f-mt-max-container, 1920) - var(--f-mt-min-container, 320))), calc(var(--f-mt-unit, 1px) * var(--f-mt-max, 16)));}
-[f-p-lg=""]{--p-min:32;--p-max:48;padding:clamp(calc(var(--f-p-unit, 1px) * var(--f-p-min, 16)), calc(var(--f-p-unit, 1px) * var(--f-p-min, 16) + (var(--f-p-max, 16) - var(--f-p-min, 16)) * (var(--f-p-container, 100vw) - (var(--f-p-unit, 1px) * var(--f-p-min-container, 320))) / (var(--f-p-max-container, 1920) - var(--f-p-min-container, 320))), calc(var(--f-p-unit, 1px) * var(--f-p-max, 16)));}
+[f-mt-xl=""]{--f-mt-min:48;--f-mt-max:72;margin-top:clamp(calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16)), calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16) + (var(--f-mt-max, 16) - var(--f-mt-min, 16)) * (var(--f-mt-container, 100vw) - (var(--f-mt-unit, 1px) * var(--f-mt-min-container, 320))) / (var(--f-mt-max-container, 1920) - var(--f-mt-min-container, 320))), calc(var(--f-mt-unit, 1px) * var(--f-mt-max, 16)));}
+[f-p-lg=""]{--f-p-min:32;--f-p-max:48;padding:clamp(calc(var(--f-p-unit, 1px) * var(--f-p-min, 16)), calc(var(--f-p-unit, 1px) * var(--f-p-min, 16) + (var(--f-p-max, 16) - var(--f-p-min, 16)) * (var(--f-p-container, 100vw) - (var(--f-p-unit, 1px) * var(--f-p-min-container, 320))) / (var(--f-p-max-container, 1920) - var(--f-p-min-container, 320))), calc(var(--f-p-unit, 1px) * var(--f-p-max, 16)));}
 /* layer: default */
 [mt~="\$f-myvar"]{margin-top:var(--f-myvar);}
 .size-32,
@@ -19,13 +19,13 @@
 .bg-pink,
 [bg-pink=""]{--un-bg-opacity:1;background-color:rgb(244 114 182 / var(--un-bg-opacity));}
 [font-bold=""]{font-weight:700;}
-[f-size~="min-128"]{--size-min:128;}
-[f-size~="max-200"]{--size-max:200;}
+[f-size~="min-128"]{--f-size-min:128;}
+[f-size~="max-200"]{--f-size-max:200;}
 [f-size~="\~"]{width:clamp(calc(var(--f-size-unit, 1px) * var(--f-size-min, 16)), calc(var(--f-size-unit, 1px) * var(--f-size-min, 16) + (var(--f-size-max, 16) - var(--f-size-min, 16)) * (var(--f-size-container, 100vw) - (var(--f-size-unit, 1px) * var(--f-size-min-container, 320))) / (var(--f-size-max-container, 1920) - var(--f-size-min-container, 320))), calc(var(--f-size-unit, 1px) * var(--f-size-max, 16)));height:clamp(calc(var(--f-size-unit, 1px) * var(--f-size-min, 16)), calc(var(--f-size-unit, 1px) * var(--f-size-min, 16) + (var(--f-size-max, 16) - var(--f-size-min, 16)) * (var(--f-size-container, 100vw) - (var(--f-size-unit, 1px) * var(--f-size-min-container, 320))) / (var(--f-size-max-container, 1920) - var(--f-size-min-container, 320))), calc(var(--f-size-unit, 1px) * var(--f-size-max, 16)));}
-.f-mt-min-0{--mt-min:0;}
-.f-mt-min-container-0{--mt-min-container:0;}
-.f-mt-max-128{--mt-max:128;}
-.f-mt-max-container-1000{--mt-max-container:1000;}
+.f-mt-min-0{--f-mt-min:0;}
+.f-mt-min-container-0{--f-mt-min-container:0;}
+.f-mt-max-128{--f-mt-max:128;}
+.f-mt-max-container-1000{--f-mt-max-container:1000;}
 .f-mt{margin-top:clamp(calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16)), calc(var(--f-mt-unit, 1px) * var(--f-mt-min, 16) + (var(--f-mt-max, 16) - var(--f-mt-min, 16)) * (var(--f-mt-container, 100vw) - (var(--f-mt-unit, 1px) * var(--f-mt-min-container, 320))) / (var(--f-mt-max-container, 1920) - var(--f-mt-min-container, 320))), calc(var(--f-mt-unit, 1px) * var(--f-mt-max, 16)));}
 [f~="\$myvar-min-0"]{--f-myvar-min:0;}
 [f~="\$myvar-max-100"]{--f-myvar-max:100;}

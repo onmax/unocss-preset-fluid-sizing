@@ -20,8 +20,8 @@ describe('presetFluidSizing', async () => {
     const { css } = await uno.generate('f-text f-text-min-12 f-text-max-16', { preflights: false })
     expect(css).toMatchInlineSnapshot(`
       "/* layer: default */
-      .f-text-min-12{--text-min:12;}
-      .f-text-max-16{--text-max:16;}
+      .f-text-min-12{--f-text-min:12;}
+      .f-text-max-16{--f-text-max:16;}
       .f-text{font-size:clamp(calc(var(--f-text-unit, 1px) * var(--f-text-min, 16)), calc(var(--f-text-unit, 1px) * var(--f-text-min, 16) + (var(--f-text-max, 16) - var(--f-text-min, 16)) * (var(--f-text-container, 100vw) - (var(--f-text-unit, 1px) * var(--f-text-min-container, 320))) / (var(--f-text-max-container, 1920) - var(--f-text-min-container, 320))), calc(var(--f-text-unit, 1px) * var(--f-text-max, 16)));}"
     `)
   })
@@ -47,5 +47,12 @@ describe('cases', () => {
     const { css, matched } = await uno.generate(input, { preflights: false })
     await expect([...matched].join('\n')).toMatchFileSnapshot(resolve(__dirname, './cases/case-3/matched.txt'))
     await expect(css).toMatchFileSnapshot(resolve(__dirname, './cases/case-3/output.css'))
+  })
+
+  it('case 4 - CSS variables', async () => {
+    const input = readFileSync(resolve(__dirname, './cases/case-4/input.html'), 'utf-8')
+    const { css, matched } = await uno.generate(input, { preflights: false })
+    await expect([...matched].join('\n')).toMatchFileSnapshot(resolve(__dirname, './cases/case-4/matched.txt'))
+    await expect(css).toMatchFileSnapshot(resolve(__dirname, './cases/case-4/output.css'))
   })
 })

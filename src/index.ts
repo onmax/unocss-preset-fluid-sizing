@@ -1,4 +1,5 @@
 import type { DynamicRule, Preset } from '@unocss/core'
+import { glob } from 'node:fs'
 import { definePreset } from '@unocss/core'
 import { theme } from './theme'
 import { fluidSizeUtilities } from './utilities'
@@ -73,11 +74,11 @@ export interface FluidSizingOptions {
   attributify?: boolean
 }
 
-const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: unitToNumberMap[Unit.px], expandCSSVariables: false }
+const globalConfig = { maxContainerWidth: 1920, minContainerWidth: 320, baseUnit: unitToNumberMap[Unit.px], expandCSSVariables: false, prefix: 'f-' }
 
 export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}) => {
   const {
-    prefix = 'f-',
+    prefix,
     maxContainerWidth,
     minContainerWidth,
     defaultBaseUnit,
@@ -87,6 +88,7 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
     attributify = false,
   } = _options
 
+  globalConfig.prefix = prefix ?? globalConfig.prefix
   globalConfig.maxContainerWidth = maxContainerWidth ?? globalConfig.maxContainerWidth
   globalConfig.minContainerWidth = minContainerWidth ?? globalConfig.minContainerWidth
   globalConfig.baseUnit = unitToNumberMap[defaultBaseUnit as keyof typeof unitToNumberMap] ?? globalConfig.baseUnit
@@ -100,10 +102,10 @@ export const presetFluidSizing = definePreset((_options: FluidSizingOptions = {}
   }
   const mergedFluidSizeUtilitiesName = mergedFluidSizeUtilities.map(u => u[0])
 
-  const rules: Preset['rules'] = mergedFluidSizeUtilities.map(([utility, properties]) => getRules(`${prefix}(${utility})`, properties)).flat(1)
-  rules.push(...getRules(`(${prefix}\\$\\w+)`))
+  const rules: Preset['rules'] = mergedFluidSizeUtilities.map(([utility, properties]) => getRules(utility, properties)).flat(1)
+  rules.push(...getCSSVarRules())
 
-  const shortcuts: Preset['shortcuts'] = getShortcuts(prefix, mergedFluidSizeUtilitiesName, { attributify, disableTheme })
+  const shortcuts: Preset['shortcuts'] = getShortcuts(mergedFluidSizeUtilitiesName, { attributify, disableTheme })
 
   return {
     name: 'unocss-preset-fluid-sizing',
@@ -133,7 +135,7 @@ function toKebabCase(str: string) {
 }
 
 function getCSSVarName(variable?: keyof typeof cssVars | string, utility?: string) {
-  return `--${utility?.replace('$', '')}${variable ? `-${toKebabCase(variable)}` : ''}`
+  return `--${globalConfig.prefix}${utility?.replace('$', '')}${variable ? `-${toKebabCase(variable)}` : ''}`
 }
 
 function getCSSVar(variable: keyof typeof cssVars, utility?: string) {
@@ -196,8 +198,62 @@ function getFluidCSS(options: FluidCSS) {
   return css
 }
 
-function getRules(reUtility: string, cssProperties: string[] = []) {
+function getRules(utility: string, cssProperties: string[] = [], reUtility = `${globalConfig.prefix}${utility}`) {
   const rules: Preset['rules'] = []
+
+  // min-<number>
+  rules.push([
+    new RegExp(`^${reUtility}-min-(\\d+)$`),
+    ([_, minSize]) => {
+      return { [getCSSVarName('min', utility)]: minSize }
+    },
+  ] satisfies DynamicRule)
+
+  // min-container-<container-width>
+  rules.push([
+    new RegExp(`^${reUtility}-min-container-(\\d+)$`),
+    ([_, userMinContainerWidth]) => {
+      return { [getCSSVarName('minContainer', utility)]: userMinContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  // max-<number>
+  rules.push([
+    new RegExp(`^${reUtility}-max-(\\d+)$`),
+    ([_, maxSize]) => {
+      return { [getCSSVarName('max', utility)]: maxSize }
+    },
+  ] satisfies DynamicRule)
+
+  // max-container-<container-width>
+  rules.push([
+    new RegExp(`^${reUtility}-max-container-(\\d+)$`),
+    ([_, userMaxContainerWidth]) => {
+      return { [getCSSVarName('maxContainer', utility)]: userMaxContainerWidth }
+    },
+  ] satisfies DynamicRule)
+
+  rules.push([
+    new RegExp(`^${reUtility}$`),
+    (matches) => {
+      if (matches.length !== 1 || matches.includes(undefined as any))
+        return
+      return getFluidCSS({ utility, properties: cssProperties })
+    },
+  ])
+
+  // Support rePrefix-base-<number>
+  rules.push([new RegExp(`^${reUtility}-base-(${units})$`), ([_, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as keyof typeof unitToNumberMap) })])
+
+  // Use cqw instead of vw
+  rules.push([new RegExp(`^${reUtility}-container$`), ([_, _group, utility]) => ({ [getCSSVarName('container', utility)]: '100cqw' })])
+
+  return rules
+}
+
+function getCSSVarRules() {
+  const rules: Preset['rules'] = []
+  const reUtility = `${globalConfig.prefix}\\$(\\w+)`
 
   // min-<number>
   rules.push([
@@ -236,22 +292,10 @@ function getRules(reUtility: string, cssProperties: string[] = []) {
     (matches) => {
       if (matches.length !== 2 || matches.includes(undefined as any))
         return
-      const utility = matches[0]
-      const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
-      return getFluidCSS({ utility, properties })
+      const properties = [getCSSVarName('', matches[1])]
+      return getFluidCSS({ utility: matches[1], properties })
     },
   ])
-  // Support rePrefix-<number>/<number> = min-<number>/max-<number>
-  // rules.push([
-  //   new RegExp(`^${rePrefix}-(\\d+)(?:/(\\d+))?$`),
-  //   (matches) => {
-  //     if (matches.length !== 4 || matches.includes(undefined as any))
-  //       return
-  //     const [_, utility, minSize, maxSize] = matches
-  //     const properties = cssProperties?.length === 0 ? [getCSSVarName('', utility)] : cssProperties!
-  //     return getFluidCSS({ utility, minSize, maxSize, properties })
-  //   },
-  // ])
 
   // Support rePrefix-base-<number>
   rules.push([new RegExp(`^${reUtility}-base-(${units})$`), ([_, utility, newUnit]) => ({ [getCSSVarName('unit', utility)]: unitToNumber(newUnit as keyof typeof unitToNumberMap) })])
@@ -269,7 +313,9 @@ function getRules(reUtility: string, cssProperties: string[] = []) {
  * 3. Shortcut for `rounded-2xs` becomes: `rounded-min/max`. The values are taken from the theme.
  * 4. Shortcut for the rest of utilities becomes: `utility-min/max`. The values are taken from the theme.
  */
-function getShortcuts(prefix: string, utilities: string[], { attributify, disableTheme }: Pick<FluidSizingOptions, 'attributify' | 'disableTheme'>): Preset['shortcuts'] {
+function getShortcuts(utilities: string[], { attributify, disableTheme }: Pick<FluidSizingOptions, 'attributify' | 'disableTheme'>): Preset['shortcuts'] {
+  const prefix = globalConfig.prefix
+
   const shortcuts: Preset['shortcuts'] = utilities.map(utility => [
     new RegExp(`^${prefix}${utility}-(\\d+)/(\\d+)$`),
     ([, min, max]) => `${prefix}${utility} ${prefix}${utility}-min-${min} ${prefix}${utility}-max-${max}`,
