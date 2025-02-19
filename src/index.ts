@@ -1,5 +1,4 @@
 import type { DynamicRule, Preset } from '@unocss/core'
-import { glob } from 'node:fs'
 import { definePreset } from '@unocss/core'
 import { theme } from './theme'
 import { fluidSizeUtilities } from './utilities'
