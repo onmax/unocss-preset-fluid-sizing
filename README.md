@@ -42,7 +42,7 @@ export default defineConfig({
 
 <!-- Using utilities -->
 <div class="f-p f-p-min-32 f-p-max-48" />
-<div class="f-text f-p-text-8 f-p-text-12" />
+<div class="f-text f-text-min-8 f-text-max-12" />
 ```
 
 ### Playground
