@@ -1,3 +1,9 @@
+// ****************** Warning ******************
+//
+// The code of this library has been moved to https://github.com/onmax/unocss-preset-onmax/tree/main/packages/unocss-preset-fluid-sizing
+// Please use the new package instead.
+// ***********************************************
+
 export const fluidSizeUtilities: [string, string[]][] = [
   ['text', ['font-size']],
   ['w', ['width']],
